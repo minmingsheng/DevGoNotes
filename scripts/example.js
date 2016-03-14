@@ -1,3 +1,16 @@
+// ****************************************************************************
+// *                                    css                                   *
+// ****************************************************************************
+	var submitStyle = {
+	 	width: '100%',
+		background: "#cbebc8"
+	}
+	var h1={
+		fontSize: "3.5em",
+		fontWeight: "bold"
+	}
+
+
 var View1 = React.createClass({
   render: function() {
     return (
@@ -25,7 +38,7 @@ var ColorForm = React.createClass({
 		       console.info(xhr);
 		     }.bind(this),
 		     error: function(xhr, status, err) {
-		     	console.error(err);
+		     	console.error(xhr);
 		     }.bind(this)
 		});
 	},
@@ -63,7 +76,7 @@ var ColorList = React.createClass({
 
 	componentDidMount: function(){
 		this.loadColor();
-		// setInterval(this.loadColor, this.props.pollInterval);
+		setInterval(this.loadColor, this.props.pollInterval);
 	},
 	render: function(){
 		var colorNode = this.state.color.map(function(c){
@@ -157,10 +170,7 @@ var FontForm = React.createClass({
 		var width= {
 		  width: '100%',
 		};
-		var submitStyle = {
-		 	width: '100%',
-			background: "#cbebc8"
-		}
+
 		return(
 			<form className = "fontForm"  onSubmit={this.handleSubmit} >
 				<p>Font Name</p>
@@ -259,29 +269,180 @@ var Font = React.createClass({
 // *                                   view3                                  *
 // ****************************************************************************
 var View3 = React.createClass({
+	getInitialState: function() {
+	   return {article: [
+	   		{ArticleName: "jason", Texts: '1abasndadadsadsadsda'},
+	   		
+	   	]};
+	},
+	getState: function(a){
+		this.setState({article:a})
+
+	},
+	// rawMarkup: function() {
+	//   var rawMarkup = marked(this.state.article.Texts.toString(), {sanitize: true});
+	//   return { __html: rawMarkup };
+	// },
   render: function() {
     return (
       <div className="text page">
-      	<h1	>Article</h1>
+      	<Selection state = {this.state.article} getState={this.getState}/>
+      	<Feeding title = {this.state.article.ArticleName} >
+      		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
+      	</Feeding>
       </div>
     );
   }
 });
+var Feeding = React.createClass({
 
+	render:function(){
+		return (
+			<div>
+				<h1 style={h1}>{this.props.title}</h1>
+				<p>{this.props.children}</p>
+			</div>
+		)
+	}
+})
+var Selection = React.createClass({
+	getInitialState : function(){
+		 return {
+		 	article : [],
+		 };
+	},	
+	handleclick: function(e){
+		e.preventDefault();
+		var data = e.target.children[0].value;
+		var feed = this.state.article.filter(function(el){
+			return el.ArticleName == data
+		
+		})
+		var text = feed[0].Texts;
+		console.info("e:", text);
+		var article ={};
+		article["ArticleName"]= data;
+		article["Texts"]=	text
+		this.props.getState(article);
+	},
+	loadArticle: function(){
+		console.info("jason");
+		$.ajax({
+		  url: "readAticle.php",
+		  dataType: 'json',
+		  cache: false,
+		  success: function(data) {
+		    this.setState({article: data.data});
+		    console.info(data.data);
+		  }.bind(this),
+		  error: function(xhr, status, err) {
+		    console.error(xhr);
+		  }.bind(this)
+		});
+	},
+	componentDidMount: function(){
+		this.loadArticle();		
+	},
+	render: function(){
+		var width = {
+			width:"100%"
+		}
+		var nodes = this.state.article.map(function(article){
+			return(
+				 <Option value={article.ArticleName}>{article.ArticleName}</Option>
+			)
+		})
+		return(
+			<form onSubmit = {this.handleclick}>
+				<select style={width}>
+				 	{nodes}
+ 				</select>
+ 				<input type="submit" value = 'Read' style={submitStyle}/>
+			</form>
+		)
+	}
+})
 
+var Option = React.createClass({
+	render: function(){
+		return (
+			<option value={this.props.value} >{this.props.children}</option>
+		)
+	}
+})
 // ****************************************************************************
 // *                                   Home                                  *
 // ****************************************************************************
 var Home = React.createClass({
   render: function() {
     return (
-      <div className="text page">
-      	<h1	>Home</h1>
+      <div className ="page-content">
+      	<Header greeting = "Good morning" name="Jason"></Header >
+      	<Todo/>
       </div>
     );
   }
 });
 
+var Header = React.createClass({
+
+	render: function(){
+		var div = {
+			height:"5em",
+			width:"100%",
+			background:"#b7d8d3",
+			paddingTop:"2em",
+			paddingLeft:"1em",
+		};
+		var p = {
+			fontSize:"0.8em",
+			fortWeight:"normal",
+			color:"#131b45",
+			marginTop: "0.4em"
+		};
+		var h3 = {
+			fontSize:"1.2em",
+			color:"#131b45"
+		};
+		return (
+			<div style={div}>
+				<h3 style={h3}>{this.props.greeting} {this.props.name}</h3>
+				<p style={p}> what you need to do?</p>
+			</div>
+		)
+	}
+})
+var Todo = React.createClass({
+	render: function(){
+		return (
+			<ul>
+				<Todolist task= "do app design" time="today" style="checked" stylep="pline"></Todolist>
+				<Todolist  task= "do wep design" time="today"></Todolist>
+				<Todolist  task= "fuck" time="today"></Todolist>
+				<Todolist  task= "kiss" time="today"></Todolist>
+				<Todolist  task= "happy endinsadadssag" time="today"></Todolist>
+			</ul>
+		)
+	}
+})
+
+var Todolist = React.createClass({
+
+	render: function(){
+		return (
+			<li className="todo">
+				<div>
+					<div>
+						<div className = {this.props.style}></div>
+					</div>
+					<p className = {this.props.stylep}>{this.props.task}</p>
+					<p>{this.props.time}</p>
+				</div>
+				<div><p>Delete</p></div>
+			</li>
+		)
+	}
+})
 
 // ****************************************************************************
 // *                                  toobar                                  *
@@ -290,25 +451,34 @@ var Toobar = React.createClass({
 
 
 	render: function(){
-		
+		var img = {
+			width: "20px",
+			height:"20px",
+			marginTop:"0.5em"
+		};
+		var toolbar = {
+			paddingTop:"0.1em",
+			height:"3.6em",
+			background:"#b7d8d3"
+		};
 
 		return(
-			<div className="toolbar tabbar tabbar-labels">
-			  <div className="toolbar-inner">
+			<div className="toolbar tabbar tabbar-labels" style={toolbar}>
+			  <div className="toolbar-inner"  >
 			    <a href="#home" className="tab-link active" onClick={this.props.handleClick}>
-			      <i className="icon tabbar-demo-icon-1"></i>
+			     <img style={img} src  = "img/home-08.png" className="icon"/>
 			      <span className="tabbar-label">Home</span>
 			    </a>
 			    <a href="#view-1" className="tab-link" onClick={this.props.handleClick}>
-			      <i className="icon tabbar-demo-icon-1"></i>
+			      <img style={img} src  = "img/color-08.png" className="icon"/>
 			      <span className="tabbar-label">Color</span>
 			    </a>
 			    <a href="#view-2" className="tab-link" onClick={this.props.handleClick}>
-			      <i className="icon tabbar-demo-icon-2"></i>
+			       <img style={img} src  = "img/font-08.png" className="icon"/>
 			      <span className="tabbar-label">Fonts</span>
 			    </a>
 			    <a href="#view-3" className="tab-link" onClick={this.props.handleClick}>
-			      <i className="icon tabbar-demo-icon-3"></i>
+			        <img style={img} src  = "img/book-08.png" className="icon"/>
 			      <span className="tabbar-label">Article</span>
 			    </a>
 			  </div>
@@ -316,6 +486,31 @@ var Toobar = React.createClass({
 		)
 	}
 })
+// ****************************************************************************
+// *                                  navbar                                  *
+// ****************************************************************************
+var Navbar = React.createClass({
+	render: function(){
+		var navS = {
+			background :'#516e99',
+			borderBottom: "3px solid #e85037"
+		}
+		return(	
+			<div className="navbar" >
+			  <div className="navbar-inner" style={navS}>
+			    <div className="left">
+			    	<img src="img/logo-01.svg" style={{widht:"20px", height:"20px"}} />
+			    </div>
+			    <div className="right">
+			    	<img src="img/hamburger-01.svg" style={{widht:"20px", height:"20px"}} />
+			    </div>
+			  </div>
+			</div>
+		)
+	}
+});
+
+
 var View = React.createClass({
 	getInitialState: function() {
 	   return {
@@ -354,9 +549,13 @@ var View = React.createClass({
 			)
 		}else{
 			return(
+				/**/
 				<div className='page'>
-					<Home />
-					<Toobar handleClick = {this.handleClick}/>
+					<div className = "page navbar-fixed toolbar-fixed">
+						<Navbar />
+						<Home />
+						<Toobar handleClick = {this.handleClick}/>
+					</div>
 				</div>
 
 			)

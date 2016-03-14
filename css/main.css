@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Hanken';
+  src: url("../font/Hanken-Light.eot?#iefix") format("embedded-opentype"), url("../font/Hanken-Light.woff") format("woff"), url("../font/Hanken-Light.ttf") format("truetype"), url("../font/Hanken-Light.svg#Hanken-Light") format("svg");
+  font-weight: 300;
+  font-style: normal; }
+@font-face {
+  font-family: 'Hanken';
+  src: url("../font/Hanken-Book.eot?#iefix") format("embedded-opentype"), url("../font/Hanken-Book.woff") format("woff"), url("../font/Hanken-Book.ttf") format("truetype"), url("../font/Hanken-Book.svg#Hanken-Book") format("svg");
+  font-weight: normal;
+  font-style: normal; }
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -28,6 +38,7 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
+  font-family: 'Hanken';
   line-height: 1; }
 
 ol, ul {
@@ -64,5 +75,80 @@ table {
         background: rgba(225, 253, 255, 0.5);
         width: 150px;
         padding-left: 1em; }
+
+.todo {
+  width: 100%;
+  height: 55px;
+  font-size: 0.8em;
+  position: relative; }
+  .todo div:first-child {
+    background: #dfe8eb;
+    width: 100%; }
+  .todo div {
+    line-height: 55px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+    width: 100%;
+    -webkit-transition: all 1s ease;
+            transition: all 1s ease
+    /*z-index: 111;*/ }
+    .todo div p {
+      -webkit-box-flex: 2;
+      -webkit-flex: 2;
+          -ms-flex: 2;
+              flex: 2;
+      display: inline;
+      font-size: 0.8em;
+      width: auto;
+      margin-left: 10px; }
+    .todo div .pline {
+      text-decoration: line-through; }
+    .todo div p:last-child {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
+      text-align: right;
+      margin-right: 1em; }
+    .todo div:active {
+      -webkit-transform: translate(-100px, 0);
+          -ms-transform: translate(-100px, 0);
+              transform: translate(-100px, 0); }
+    .todo div > div:first-child {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #b7d8d3;
+      margin-left: 10px;
+      margin-top: 19px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex; }
+      .todo div > div:first-child .checked {
+        width: 10px;
+        height: 10px;
+        background: #141b35;
+        z-index: 100;
+        left: 2.5px;
+        top: 2.5px
+        /*position: relative;*/ }
+  .todo div:last-child {
+    width: 100px;
+    background: #e85037;
+    line-height: 55px;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    /*opacity: 0.3;*/
+    z-index: -110; }
+    .todo div:last-child p {
+      color: white;
+      text-align: center; }
 
 /*# sourceMappingURL=main.css.map */
