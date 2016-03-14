@@ -9,12 +9,28 @@
 		fontSize: "3.5em",
 		fontWeight: "bold"
 	}
+// ****************************************************************************
+// *                                  helper                                  *
+// ****************************************************************************
+
+function getDate(time){
+	    var t = parseInt(time);
+	    t = new Date(t).toLocaleString();
+		console.log(t);
+	    var num = t.split("").indexOf(",");
+	    t = t.split("").splice(0,num).join("");
+		console.log(t);
+	    return t;
+}
+// 	****************************************************************************
+// *                             view1 color                                   *
+// ****************************************************************************
 
 
 var View1 = React.createClass({
   render: function() {
     return (
-      <div className="colorNotes page">
+      <div className="colorNotes page-content">
       	<div className="center sliding">Color Notes</div>
         <ColorForm />
         <ColorList />
@@ -47,7 +63,6 @@ var ColorForm = React.createClass({
 			<form className = "ColorForm" onSubmit = {this.addColor}>
 				<input type="text" placeholder = "type the code" />
 				<input type="submit" value="Post" />
-				
 			</form>
 		)
 	}
@@ -172,7 +187,7 @@ var FontForm = React.createClass({
 		};
 
 		return(
-			<form className = "fontForm"  onSubmit={this.handleSubmit} >
+			<form className = "fontForm page-content"  onSubmit={this.handleSubmit} >
 				<p>Font Name</p>
 				<input type="text"  className ="name" style={width} placeholder="type the font.."/>
 				<p>Web Address</p>
@@ -285,7 +300,7 @@ var View3 = React.createClass({
 	// },
   render: function() {
     return (
-      <div className="text page">
+      <div className="page-content">
       	<Selection state = {this.state.article} getState={this.getState}/>
       	<Feeding title = {this.state.article.ArticleName} >
       		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
@@ -378,7 +393,7 @@ var Home = React.createClass({
     return (
       <div className ="page-content">
       	<Header greeting = "Good morning" name="Jason"></Header >
-      	<Todo/>
+      	<Todo pollInterval={444}/>
       </div>
     );
   }
@@ -413,32 +428,221 @@ var Header = React.createClass({
 	}
 })
 var Todo = React.createClass({
+	getInitialState : function(){
+		return {
+	   		todo: []
+		};
+	},
+	loadTodo : function(){
+		console.log(this);
+		$.ajax({
+		  url: "readTodo.php",
+		  dataType: 'json',
+		  cache: false,
+		  success: function(data) {
+		    this.setState({todo: data.data});
+		    console.log(data);
+		  }.bind(this),
+		  error: function(xhr, status, err) {
+		    console.error(this.props.url, status, err.toString());
+		  }.bind(this)
+		});
+	},
+	componentDidMount : function(){
+		this.loadTodo();
+		setInterval(this.loadTodo, this.props.pollInterval)
+	},
+				// <Todolist task= "do app design" time="today" style="checked" stylep="pline"></Todolist>
+				// <Todolist  task= "do wep design" time="today"></Todolist>
+				// <Todolist  task= "fuck" time="today"></Todolist>
+				// <Todolist  task= "kiss" time="today"></Todolist>
+				// <Todolist  task= "happy endinsadadssag" time="today"></Todolist>
 	render: function(){
+		// <Todolist task= "do app design" time="today" style="checked" stylep="pline"></Todolist>
+		var fn = this.loadTodo;
+		var todoList = this.state.todo.map(function(todo){
+			var t = getDate(todo.time);
+			return (<Todolist task= {todo.todo} time={t} loadTodo={fn}></Todolist>)
+		});
 		return (
 			<ul>
-				<Todolist task= "do app design" time="today" style="checked" stylep="pline"></Todolist>
-				<Todolist  task= "do wep design" time="today"></Todolist>
-				<Todolist  task= "fuck" time="today"></Todolist>
-				<Todolist  task= "kiss" time="today"></Todolist>
-				<Todolist  task= "happy endinsadadssag" time="today"></Todolist>
+				{todoList}
 			</ul>
 		)
 	}
 })
 
 var Todolist = React.createClass({
+	getInitialState : function(){
+		return {
+			edi: false,
+			del: false,
+		}
+	},
+	handleclick : function(e){
+		var pox = e.clientX;
+		if(pox < window.innerWidth/2){
+			if(this.state.edi){
+				/*does not work*/
 
+				var tt = e.target.parentElement.parentElement.children[0];      
+				tt.parentElement.querySelector(".edi").style.zIndex = -1;
+				tt.parentElement.querySelector(".edi").style.transition = "all 33ms  ease";
+				tt.style.webkitTransform = "translate(0px, 0)";              
+				tt.style.msTransform = "translate(0px, 0)";              
+				tt.style.transform = "translate(0px, 0)";              
+				this.setState({edi: false});                
+
+			}else{
+				// console.info("edit");
+				var tt = e.target.parentElement.parentElement.children[0];
+				tt.style.webkitTransform = "translate(100px, 0)";
+				tt.style.msTransform = "translate(100px, 0)";
+				tt.style.transform = "translate(100px, 0)";
+				console.info(tt.parentElement.querySelector(".edi"));
+				tt.parentElement.querySelector(".edi").style.zIndex = 1;
+				tt.parentElement.querySelector(".edi").style.transition = "all 1s 1s ease";
+
+				this.setState({edi: true});
+			}
+
+		}else{
+			console.info("del");
+			console.info(e.target.parentElement);
+			var tar = e.target.parentElement;
+			console.info(tar.parentElement.children[1]);
+			if(this.state.del){
+				tar.style.webkitTransform = "translate(0px, 0)";
+				tar.style.msTransform = "translate(0px, 0)";
+				tar.style.transform = "translate(0px, 0)";
+				tar.parentElement.children[2].style.zIndex = -1;
+				tar.parentElement.children[2].style.transition = "all 33ms  ease";
+
+				this.setState({del: false});
+			}else{
+				tar.style.webkitTransform = "translate(-100px, 0)";
+				tar.style.msTransform = "translate(-100px, 0)";
+				tar.style.transform = "translate(-100px, 0)";
+				tar.parentElement.children[2].style.zIndex = 1;
+				tar.parentElement.children[2].style.transition = "all 1s 1s ease";
+				this.setState({del: true});
+			}
+			
+		}
+	},
+	handleDel : function(e){
+		e.stopPropagation();
+		var t =e.target.parentElement.parentElement.querySelector('p').textContent;
+		var data = "todo="+t;
+		console.info(t);
+		$.ajax({
+		     url: "delTodo.php",
+		     dataType: 'json',
+		     type: 'POST',
+		     data: data,
+		     success: function(xhr) {
+		       console.info(xhr);
+		       this.props.loadTodo();
+		     }.bind(this),
+		     error: function(xhr, status, err) {
+		     	console.info(xhr);
+		     }.bind(this)
+		});
+		var tt = e.target;
+
+		// console.info("from: ",e.parentElement);
+	},
+	handleEdi : function(e){
+		var tt = e.target.parentElement.parentElement;
+		var data = tt;
+		var dataT = data.children[0].querySelector('p').textContent;
+		var data = data.children[0].querySelector('p').textContent;
+		data = "todot="+dataT;
+		console.info(data);
+		var div= document.createElement("div");
+		div.style.width = "100%";
+		div.style.height = "100%";
+		div.style.background = "#516e99";
+		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.position = "absolute";
+		div.style.zIndex = "1000000";
+		div.style.top = "0";
+		var form = document.createElement("div");
+		var input = document.createElement("input");
+		input.setAttribute("type", "text");
+		input.setAttribute("placeholder", dataT);
+		input.style.width = "70%";
+		input.style.height = "45px";
+		input.style.display = "block";
+		input.style.border = "none";
+		input.style.fontWeight = "normal";
+		input.style.borderRadius = "3px";
+		input.style.color = "#b7d8d3";
+		input.style.background = "rgba(183, 216, 211, 0.3)";
+		input.style.margin = "15em auto";
+		input.style.marginBottom = "0";
+		input.style.paddingLeft = "1em";
+		var submit = document.createElement("div");
+		submit.textContent = "OK";
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "save");
+		submit.style.width = "74%";
+		submit.style.height = "45px";
+		submit.style.display = "block";
+		submit.style.margin = "1em auto";
+		submit.style.fontSize = "0.8em";
+		submit.style.textAlign = "center";
+		submit.style.background = "#b7d8d3";
+		submit.style.color = "#516e99";
+		submit.style.lineHeight = "45px";
+		submit.style.border = "none";
+		submit.style.borderRadius = "3px";
+		submit.addEventListener("click", function(a){
+			var v = input.value;
+			var t = Date.now();
+			// var t = new Date(t)
+			console.info(v);
+			console.info(t);
+			data += "&todo="+v;
+			data +="&time="+t;
+			console.info(data);
+			$.ajax({
+			     url: "updateTodo.php",
+			     dataType: 'json',
+			     type: 'POST',
+			     data: data,
+			     success: function(xhr) {
+			       console.info(xhr);
+			       var li = document.querySelector(".edi").parentElement;
+			       console.info(li);
+			       li.style.webkitTransform="translate(0,0)";
+			       li.style.msTransform="translate(0,0)";
+			       li.style.transform="translate(0,0)";
+			     }.bind(this),
+			     error: function(xhr, status, err) {
+			     	console.info(xhr);
+			     }.bind(this)
+			});
+			div.remove();
+		}, false)
+		form.appendChild(input);
+		form.appendChild(submit);
+		div.appendChild(form);
+		document.body.appendChild(div);
+	},
 	render: function(){
 		return (
 			<li className="todo">
-				<div>
+				<div onClick ={this.handleclick}>
 					<div>
 						<div className = {this.props.style}></div>
 					</div>
 					<p className = {this.props.stylep}>{this.props.task}</p>
 					<p>{this.props.time}</p>
 				</div>
-				<div><p>Delete</p></div>
+				<div className="edi"><p onClick = {this.handleEdi}>Edit</p></div>
+				<div className="del"><p onClick = {this.handleDel}>Delete</p></div>
+				
 			</li>
 		)
 	}
@@ -448,22 +652,44 @@ var Todolist = React.createClass({
 // *                                  toobar                                  *
 // ****************************************************************************
 var Toobar = React.createClass({
-
-
 	render: function(){
 		var img = {
 			width: "20px",
 			height:"20px",
-			marginTop:"0.5em"
+			marginTop:"0.5em",
+			position:"relative"
 		};
 		var toolbar = {
 			paddingTop:"0.1em",
 			height:"3.6em",
 			background:"#b7d8d3"
 		};
+		var addicon ={
+			position:"absolute",
+			width:"50px",
+			height:"50px",
+			borderRadius:"50%",
+			background:"#b7d8d3",
+			right:0,
+			left:0,
+			top:"-40%",
+			margin:"auto",
+			zIndex:"1000",
+			border:"1px solid #516e99"
 
+		};
+		var plus = {
+			width:"30px",
+			height:"30px",
+			color:"white",
+			display:"block",
+			margin: "10px auto",
+		}
 		return(
 			<div className="toolbar tabbar tabbar-labels" style={toolbar}>
+			  <div style={addicon} onClick={this.props.handlSend}>
+			  	   <img style={plus} src="img/plus-08.png" alt="+"/>
+			  </div>
 			  <div className="toolbar-inner"  >
 			    <a href="#home" className="tab-link active" onClick={this.props.handleClick}>
 			     <img style={img} src  = "img/home-08.png" className="icon"/>
@@ -494,12 +720,20 @@ var Navbar = React.createClass({
 		var navS = {
 			background :'#516e99',
 			borderBottom: "3px solid #e85037"
-		}
+		};
+		var center = {
+			msTransform: "translate(-20px, 0)",
+			webkitTransformt: "translate(-20px, 0)",
+			transform: "translate(-20px, 0)"
+		};
 		return(	
 			<div className="navbar" >
 			  <div className="navbar-inner" style={navS}>
 			    <div className="left">
 			    	<img src="img/logo-01.svg" style={{widht:"20px", height:"20px"}} />
+			    </div>
+			    <div className="center" style={center}>
+			    	<p>{this.props.children}</p>
 			    </div>
 			    <div className="right">
 			    	<img src="img/hamburger-01.svg" style={{widht:"20px", height:"20px"}} />
@@ -522,10 +756,80 @@ var View = React.createClass({
 		console.log(t);
 		this.setState({view: t})
 	},
+	handlSendtodo:function(e){
+		console.info("sasaas");
+		var div= document.createElement("div");
+		div.style.width = "100%";
+		div.style.height = "100%";
+		div.style.background = "#516e99";
+		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.webkitAnimation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.position = "absolute";
+		div.style.zIndex = "1000000";
+		div.style.top = "0";
+		var form = document.createElement("div");
+		var input = document.createElement("input");
+		input.setAttribute("type", "text");
+		input.setAttribute("placeholder", "enter the thing need to do..");
+		input.style.width = "70%";
+		input.style.height = "45px";
+		input.style.display = "block";
+		input.style.border = "none";
+		input.style.fontWeight = "normal";
+		input.style.borderRadius = "3px";
+		input.style.color = "#b7d8d3";
+		input.style.background = "rgba(183, 216, 211, 0.3)";
+		input.style.margin = "15em auto";
+		input.style.marginBottom = "0";
+		input.style.paddingLeft = "1em";
+		var submit = document.createElement("div");
+		submit.textContent = "OK";
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "save");
+		submit.style.width = "74%";
+		submit.style.height = "45px";
+		submit.style.display = "block";
+		submit.style.margin = "1em auto";
+		submit.style.fontSize = "0.8em";
+		submit.style.textAlign = "center";
+		submit.style.background = "#b7d8d3";
+		submit.style.color = "#516e99";
+		submit.style.lineHeight = "45px";
+		submit.style.border = "none";
+		submit.style.borderRadius = "3px";
+		submit.addEventListener("click", function(e){
+			var v = input.value;
+			var t = Date.now();
+			// var t = new Date(t)
+			console.info(v);
+			console.info(t);
+			var data = "todo="+v+"&time="+t;
+			console.info(data);
+			$.ajax({
+			     url: "addTodo.php",
+			     dataType: 'json',
+			     type: 'POST',
+			     data: data,
+			     success: function(xhr) {
+			       console.info(xhr);
+			     }.bind(this),
+			     error: function(xhr, status, err) {
+			     	console.info(xhr);
+			     }.bind(this)
+			});
+			div.remove();
+		}, false)
+		form.appendChild(input);
+		form.appendChild(submit);
+		div.appendChild(form);
+		document.body.appendChild(div);
+
+	},
 	render: function(){
 		if(this.state.view=="view1"){
 			return(
-				<div className='page'>
+				<div className='page navbar-fixed toolbar-fixed'>
+					<Navbar>Color</Navbar>
 					<View1 />
 					<Toobar handleClick = {this.handleClick}/>
 				</div>
@@ -533,7 +837,8 @@ var View = React.createClass({
 			)
 		}else if(this.state.view=="view2"){
 			return(
-				<div className='page'>
+				<div className='page navbar-fixed toolbar-fixed'>
+					<Navbar>Fonts</Navbar>
 					<View2 />
 					<Toobar handleClick = {this.handleClick} />
 				</div>
@@ -541,7 +846,8 @@ var View = React.createClass({
 			)
 		}else if(this.state.view=="view3"){
 			return(
-				<div className='page'>
+				<div className='page navbar-fixed toolbar-fixed'>
+					<Navbar>Article</Navbar>
 					<View3 />
 					<Toobar handleClick = {this.handleClick}/>
 				</div>
@@ -549,12 +855,12 @@ var View = React.createClass({
 			)
 		}else{
 			return(
-				/**/
+				/*home*/
 				<div className='page'>
 					<div className = "page navbar-fixed toolbar-fixed">
-						<Navbar />
+						<Navbar>Home</Navbar>
 						<Home />
-						<Toobar handleClick = {this.handleClick}/>
+						<Toobar handleClick = {this.handleClick} handlSend = {this.handlSendtodo}/>
 					</div>
 				</div>
 
