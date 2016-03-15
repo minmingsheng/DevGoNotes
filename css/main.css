@@ -70,11 +70,130 @@ table {
     width: 100%;
     height: auto; }
     #view .ColorList .color {
-      width: 100%; }
-      #view .ColorList .color p {
-        background: rgba(225, 253, 255, 0.5);
-        width: 150px;
-        padding-left: 1em; }
+      width: 90%;
+      height: auto;
+      margin: auto;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: row;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -webkit-flex-wrap: wrap;
+          -ms-flex-wrap: wrap;
+              flex-wrap: wrap;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+          -ms-flex-pack: justify;
+              justify-content: space-between; }
+      #view .ColorList .color .colorli {
+        -webkit-box-flex: 1;
+        -webkit-flex-grow: 1;
+            -ms-flex-positive: 1;
+                flex-grow: 1;
+        -webkit-align-self: auto;
+            -ms-flex-item-align: auto;
+                align-self: auto;
+        width: 6em;
+        height: 6em;
+        margin: 0.5em;
+        margin-top: 1.25em;
+        overflow: hidden;
+        position: relative; }
+        #view .ColorList .color .colorli .colorFeed {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          -webkit-transition: all 0.5s  ease;
+                  transition: all 0.5s  ease;
+          z-index: 10;
+          cursor: pointer; }
+          #view .ColorList .color .colorli .colorFeed p {
+            background: rgba(225, 253, 255, 0.5);
+            width: 100%;
+            font-size: 0.8em;
+            text-align: center;
+            opacity: 0.4;
+            padding: 0.2em 0; }
+        #view .ColorList .color .colorli .cdel {
+          cursor: pointer;
+          width: 100%;
+          height: 40px;
+          background: #e85037;
+          text-align: center;
+          line-height: 40px;
+          font-size: 0.8em;
+          color: white;
+          position: absolute;
+          bottom: 0; }
+  #view .fontList {
+    width: 100%; }
+    #view .fontList .fontFeed {
+      position: relative; }
+      #view .fontList .fontFeed .des {
+        position: relative;
+        cursor: pointer; }
+        #view .fontList .fontFeed .des .dess {
+          width: 100%;
+          background: #e2efed;
+          height: auto;
+          padding: 1.4em 2em;
+          -webkit-transition: all 0.7s ease;
+                  transition: all 0.7s ease; }
+          #view .fontList .fontFeed .des .dess p {
+            width: 70%;
+            margin: 1em;
+            font-size: 0.7;
+            font-weight: 300;
+            color: rgba(0, 0, 0, 0.6); }
+        #view .fontList .fontFeed .des .delFont {
+          height: 100%;
+          width: 5em;
+          background: #e85037;
+          position: absolute;
+          right: 0;
+          top: 0;
+          display: -webkit-box;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+          -webkit-flex-direction: row;
+              -ms-flex-direction: row;
+                  flex-direction: row;
+          -webkit-box-align: center;
+          -webkit-align-items: center;
+              -ms-flex-align: center;
+                  align-items: center;
+          color: #ffffff;
+          font-size: 0.8em;
+          font-weight: 300;
+          z-index: -1; }
+          #view .fontList .fontFeed .des .delFont p {
+            text-align: center;
+            width: 100%; }
+      #view .fontList .fontFeed a {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 50px;
+        background: #516e99;
+        color: white;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 50px;
+        font-weight: 300; }
+  #view .articleList {
+    width: 90%;
+    margin: 5em auto;
+    list-style-position: outside; }
+    #view .articleList li {
+      margin: 1em;
+      list-style-position: outside; }
 
 .todo {
   /*width: 100%;*/

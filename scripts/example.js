@@ -31,48 +31,48 @@ var View1 = React.createClass({
   render: function() {
     return (
       <div className="colorNotes page-content">
-      	<div className="center sliding">Color Notes</div>
-        <ColorForm />
-        <ColorList />
-
+        {/*<ColorForm />*/}
+        <ColorList/>
       </div>
     );
   }
 });
 
-var ColorForm = React.createClass({
-	addColor: function(e){
-		e.preventDefault();
-		var data = "color="+ e.target.querySelector("input[type=text]").value;
-		console.info(data);
-		$.ajax({
-		     url: "addColor.php",
-		     dataType: 'json',
-		     type: 'POST',
-		     data: data,
-		     success: function(xhr) {
-		       console.info(xhr);
-		     }.bind(this),
-		     error: function(xhr, status, err) {
-		     	console.error(xhr);
-		     }.bind(this)
-		});
-	},
-	render:function(){
-		return(
-			<form className = "ColorForm" onSubmit = {this.addColor}>
-				<input type="text" placeholder = "type the code" />
-				<input type="submit" value="Post" />
-			</form>
-		)
-	}
-})
+// var ColorForm = React.createClass({
+// 	addColor: function(e){
+// 		e.preventDefault();
+// 		var data = "color="+ e.target.querySelector("input[type=text]").value;
+// 		console.info(data);
+// 		$.ajax({
+// 		     url: "addColor.php",
+// 		     dataType: 'json',
+// 		     type: 'POST',
+// 		     data: data,
+// 		     success: function(xhr) {
+// 		       console.info(xhr);
+// 		     }.bind(this),
+// 		     error: function(xhr, status, err) {
+// 		     	console.error(xhr);
+// 		     }.bind(this)
+// 		});
+// 	},
+// 	render:function(){
+// 		return(
+// 			<form className = "ColorForm" onSubmit = {this.addColor}>
+// 				<input type="text" placeholder = "type the code" />
+// 				<input type="submit" value="Post" />
+// 			</form>
+// 		)
+// 	}
+// })
 
 var ColorList = React.createClass({
 	getInitialState: function() {
 	   return {color: [
 	   		
-	   	]};
+	   	],
+	   	del: false,
+	   };
 	 },
 	loadColor: function(){
 		$.ajax({
@@ -88,21 +88,40 @@ var ColorList = React.createClass({
 		  }.bind(this)
 		});
 	},
+	clickColorFeed:function(e){
+		var t = e.target;
+		if(!this.state.del){
+			console.info(t);
+			t.style.webkitTransform = "translate(0,-40px)";
+			t.style.msTransform = "translate(0,-40px)";
+			t.style.transform = "translate(0,-40px)";
+			this.setState({del:true})
+		}else{
+			t.style.webkitTransform = "translate(0,0px)";
+			t.style.msTransform = "translate(0,0px)";
+			t.style.transform = "translate(0,0px)";
+			this.setState({del:false})
 
+		}
+
+	},
 	componentDidMount: function(){
 		this.loadColor();
 		setInterval(this.loadColor, this.props.pollInterval);
 	},
 	render: function(){
+		var thatclickColorFeed = this.clickColorFeed;
 		var colorNode = this.state.color.map(function(c){
 			var cc =  {background:c.ColorCode}
 			return(
-				<Color author="jason"  pollInterval= {2000} cc={cc} >{c.ColorCode}</ Color>
+				<Color author="jason"  pollInterval= {2000} clickColorFeed ={thatclickColorFeed} cc={cc} >{c.ColorCode}</ Color>
 			)
 		})
 		return (
 			<div className = "ColorList">
-				{colorNode}
+				<div className = "color">
+					{colorNode}
+				</div>
 			</div>
 		)
 	}
@@ -111,9 +130,8 @@ var ColorList = React.createClass({
 var Color = React.createClass({
 	delColor:function(e){
 		var ColorCode = e.target.style.background;
-		var data = "ColorCode="+e.target.textContent;
-		console.log(data);
-
+		var data = "ColorCode="+e.target.parentElement.parentElement.children[0].textContent;
+		console.info(data);
 		var xhr = new XMLHttpRequest();
 		xhr.open( 'POST', 'delColor.php' );
 		xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
@@ -127,13 +145,17 @@ var Color = React.createClass({
 	},
 	udateColor: function(e){
 		var data = e.target.textContent;
-		console.info(data);
+		// console.info(data);
 	},
 	render: function(){
-		var cc = this.props.cc
+		var cc = this.props.cc;
 		return (
-			<div className = "color" onMouseEnter={this.udateColor} onClick= {this.delColor} style={cc}>
+
+			<div className = "colorli" onMouseEnter={this.udateColor} onmousemove= {this.delColor} >
+				<div className = "colorFeed" style={cc} onClick={this.props.clickColorFeed}>
 					<p>{this.props.children}</p>
+				</div>
+				<div className="cdel" onClick={this.delColor}><p>Delete</p></div>
 			</div>
 		)
 	}
@@ -141,66 +163,66 @@ var Color = React.createClass({
 
 
 // ****************************************************************************
-// *                                   view2                                  *
+// *                              view2 Font                                  *
 // ****************************************************************************
 var View2 = React.createClass({
   render: function() {
     return (
-      <div className="fontNotes page">
-      	<h1	>FontNotes</h1>
-      	<FontForm ></FontForm >
+      <div className="fontNotes  page-content">
+      	{/*<h1>FontNotes</h1>*/}
+      	{/*<FontForm ></FontForm >*/}
       	<FontList/>
       </div>
     );
   }
 });
-var FontForm = React.createClass({
-	handleSubmit: function(e){
-		e.preventDefault();
-		var name = e.target.children[1].value;
-		e.target.children[1].value="";
-		var address = e.target.children[3].value;
-		address = e.target.children[3].value="";
-		var notes = e.target.children[5].value;
-		e.target.children[5].value="";
-		console.info(name);
-		console.info(address);
-		console.info(notes);
-		var data = "name="+name+"&address="+address+"&notes="+notes;
-		console.info(data);
-		$.ajax({
-		     url: "addFont.php",
-		     dataType: 'json',
-		     type: 'POST',
-		     data: data,
-		     success: function(xhr) {
-		       console.info(xhr);
-		     }.bind(this),
-		     error: function(xhr, status, err) {
-		     	console.info(xhr);
-		     }.bind(this)
-		});
-	},
-	render:function(){
-		var width= {
-		  width: '100%',
-		};
+// var FontForm = React.createClass({
+// 	handleSubmit: function(e){
+// 		e.preventDefault();
+// 		var name = e.target.children[1].value;
+// 		e.target.children[1].value="";
+// 		var address = e.target.children[3].value;
+// 		address = e.target.children[3].value="";
+// 		var notes = e.target.children[5].value;
+// 		e.target.children[5].value="";
+// 		console.info(name);
+// 		console.info(address);
+// 		console.info(notes);
+// 		var data = "name="+name+"&address="+address+"&notes="+notes;
+// 		console.info(data);
+// 		$.ajax({
+// 		     url: "addFont.php",
+// 		     dataType: 'json',
+// 		     type: 'POST',
+// 		     data: data,
+// 		     success: function(xhr) {
+// 		       console.info(xhr);
+// 		     }.bind(this),
+// 		     error: function(xhr, status, err) {
+// 		     	console.info(xhr);
+// 		     }.bind(this)
+// 		});
+// 	},
+// 	render:function(){
+// 		var width= {
+// 		  width: '100%',
+// 		};
 
-		return(
-			<form className = "fontForm page-content"  onSubmit={this.handleSubmit} >
-				<p>Font Name</p>
-				<input type="text"  className ="name" style={width} placeholder="type the font.."/>
-				<p>Web Address</p>
-				<input type="text" className ="address"  style={width} placeholder="type the address.."/>
-				<p>Notes</p>
-				<input type="text" className ="notes"  style={width} placeholder="type the notes.."/>
-				<input type="submit"  style={submitStyle} placeholder="type the font.."/>
-			</form>
-		);
-	}
-});
+// 		return(
+// 			<form className = "fontForm page-content"  onSubmit={this.handleSubmit} >
+// 				<p>Font Name</p>
+// 				<input type="text"  className ="name" style={width} placeholder="type the font.."/>
+// 				<p>Web Address</p>
+// 				<input type="text" className ="address"  style={width} placeholder="type the address.."/>
+// 				<p>Notes</p>
+// 				<input type="text" className ="notes"  style={width} placeholder="type the notes.."/>
+// 				<input type="submit"  style={submitStyle} placeholder="type the font.."/>
+// 			</form>
+// 		);
+// 	}
+// });
 var FontList  = React.createClass({
-	getInitialState: function() {
+	getInitialState: function(){
 	  return {font:[]};
 	},
 	loadFont: function(){
@@ -238,8 +260,14 @@ var FontList  = React.createClass({
 	}
 });
 var Font = React.createClass({
+	getInitialState: function(){
+		return {
+			del: false,
+		}
+
+	},
 	handleclick: function(e){
-		var data = "name="+e.target.textContent;
+		var data = "name="+e.target.parentElement.querySelector("h1").textContent;
 		console.info(data);
 		$.ajax({
 		     url: "delFont.php",
@@ -254,34 +282,44 @@ var Font = React.createClass({
 		     }.bind(this)
 		});
 	},
-	render:function(){
-		var titleS = {
-			background:"#516c97",
-			textAlign:"center"
-		};
-		var copyS = {
-			width:"100vw",
-			display:"inline-block",
-			padding:"10px",
-			lineBreak:"auto"
-		};
+	handledel: function(e){
+		var tt = e.target.parentElement.parentElement.querySelector(".dess");
+		if(!this.state.del){
+			tt.style.transform = "translate(-8em, 0)";
+			tt.style.webkitTransform = "translate(-8em, 0)";
+			tt.style.msTransform = "translate(-8em, 0)";
+			e.target.parentElement.parentElement.querySelector(".delFont").style.zIndex = 2;
+			e.target.parentElement.parentElement.querySelector(".delFont").style.transition = "all 0.7s 0.7s ease";
+			this.setState({del: true});
+		}else{
+			e.target.parentElement.parentElement.querySelector(".delFont").style.transition = "none";
+			e.target.parentElement.parentElement.querySelector(".delFont").style.zIndex = -1;
+			tt.style.transform = "translate(0em, 0)";
+			tt.style.webkitTransform = "translate(0em, 0)";
+			tt.style.msTransform = "translate(0em, 0)";
+			this.setState({del: false});
 
+
+		}
+	},
+	render:function(){
 		return (
-			<div >
-				{/*<h5 style={titleS} ><b>Font Name</b></h5>*/}
-				<h1 style={titleS} onClick={this.handleclick}>{this.props.name}</h1>
-			{	
-				 /*<h5  style={titleS}><b>Web Address</b></h5>
-				 						// <p style={copyS}>{this.props.Address}</p>*/
-			}
-				{/*<h5  style={titleS}><b>Notes</b></h5>*/}
-				<p style={copyS}>{this.props.note}</p>
+			<div className = "fontFeed">
+				<div className = "des">
+					<div className = "dess" onClick = {this.handledel}>
+						<h1>{this.props.name}</h1>
+						<p>{this.props.note}</p>
+					</div>
+					<div className="delFont" onClick={this.handleclick}><p>Delete</p></div>
+				</div>
+				<a href={this.props.Address}><p>Take a look</p></a>
+
 			</div>
 		)
 	}
 })
 // ****************************************************************************
-// *                                   view3                                  *
+// *                              view3  Article                               *
 // ****************************************************************************
 var View3 = React.createClass({
 	getInitialState: function() {
@@ -300,7 +338,7 @@ var View3 = React.createClass({
 	// },
   render: function() {
     return (
-      <div className="page-content">
+      <div className="page-content" >
       	<Selection state = {this.state.article} getState={this.getState}/>
       	<Feeding title = {this.state.article.ArticleName} >
       		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
@@ -310,7 +348,6 @@ var View3 = React.createClass({
   }
 });
 var Feeding = React.createClass({
-
 	render:function(){
 		return (
 			<div>
@@ -364,16 +401,13 @@ var Selection = React.createClass({
 		}
 		var nodes = this.state.article.map(function(article){
 			return(
-				 <Option value={article.ArticleName}>{article.ArticleName}</Option>
+				 <li value={article.ArticleName}>{article.ArticleName}</li>
 			)
 		})
 		return(
-			<form onSubmit = {this.handleclick}>
-				<select style={width}>
-				 	{nodes}
- 				</select>
- 				<input type="submit" value = 'Read' style={submitStyle}/>
-			</form>
+			<div className = "articleList">
+				{nodes}
+			</div>
 		)
 	}
 })
@@ -825,13 +859,245 @@ var View = React.createClass({
 		document.body.appendChild(div);
 
 	},
+	handleAddColor: function(){
+		var div= document.createElement("div");
+		div.style.width = "100%";
+		div.style.height = "100%";
+		div.style.background = "#516e99";
+		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.webkitAnimation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.position = "absolute";
+		div.style.zIndex = "1000000";
+		div.style.top = "0";
+		var form = document.createElement("div");
+		var input = document.createElement("input");
+		input.setAttribute("type", "text");
+		input.setAttribute("placeholder", "enter the color..");
+		input.style.width = "70%";
+		input.style.height = "45px";
+		input.style.display = "block";
+		input.style.border = "none";
+		input.style.fontWeight = "normal";
+		input.style.borderRadius = "3px";
+		input.style.color = "#b7d8d3";
+		input.style.background = "rgba(183, 216, 211, 0.3)";
+		input.style.margin = "15em auto";
+		input.style.marginBottom = "0";
+		input.style.paddingLeft = "1em";
+		var submit = document.createElement("div");
+		submit.textContent = "OK";
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "save");
+		submit.style.width = "74%";
+		submit.style.height = "45px";
+		submit.style.display = "block";
+		submit.style.margin = "1em auto";
+		submit.style.fontSize = "0.8em";
+		submit.style.textAlign = "center";
+		submit.style.background = "#b7d8d3";
+		submit.style.color = "#516e99";
+		submit.style.lineHeight = "45px";
+		submit.style.border = "none";
+		submit.style.borderRadius = "3px";
+		submit.addEventListener("click", function(e){
+			var v = input.value;
+			var t = Date.now();
+			// var t = new Date(t)
+			console.info(v);
+			console.info(t);
+			var data = "color=" + v;
+			console.info(data);
+			$.ajax({
+			     url: "addColor.php",
+			     dataType: 'json',
+			     type: 'POST',
+			     data: data,
+			     success: function(xhr) {
+			       console.info(xhr);
+			     }.bind(this),
+			     error: function(xhr, status, err) {
+			     	console.error(xhr);
+			     }.bind(this)
+			});
+			div.remove();
+		});
+		form.appendChild(input);
+		form.appendChild(submit);
+		div.appendChild(form);
+		document.body.appendChild(div);
+		console.info("eee");
+
+	},
+	handleSendFont: function(){
+		var div= document.createElement("div");
+		div.style.width = "100%";
+		div.style.height = "100%";
+		div.style.background = "#516e99";
+		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.webkitAnimation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.position = "absolute";
+		div.style.zIndex = "1000000";
+		div.style.top = "0";
+		var form = document.createElement("div");
+		var input = document.createElement("input");
+		input.setAttribute("type", "text");
+		input.setAttribute("placeholder", "enter the Font name..");
+		input.style.width = "70%";
+		input.style.height = "45px";
+		input.style.display = "block";
+		input.style.border = "none";
+		input.style.fontWeight = "normal";
+		input.style.borderRadius = "3px";
+		input.style.color = "#b7d8d3";
+		input.style.background = "rgba(183, 216, 211, 0.3)";
+		input.style.margin = "15em auto";
+		input.style.marginBottom = "0";
+		input.style.paddingLeft = "1em";
+		var input1 = document.createElement("input");
+		input1.setAttribute("type", "text");
+		input1.setAttribute("placeholder", "enter the note..");
+		input1.style.width = "70%";
+		input1.style.height = "45px";
+		input1.style.display = "block";
+		input1.style.border = "none";
+		input1.style.fontWeight = "normal";
+		input1.style.borderRadius = "3px";
+		input1.style.color = "#b7d8d3";
+		input1.style.background = "rgba(183, 216, 211, 0.3)";
+		input1.style.margin = "1em auto";
+		input1.style.marginBottom = "0";
+		input1.style.paddingLeft = "1em";
+		var submit = document.createElement("div");
+		submit.textContent = "OK";
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "save");
+		submit.style.width = "74%";
+		submit.style.height = "45px";
+		submit.style.display = "block";
+		submit.style.margin = "1em auto";
+		submit.style.fontSize = "0.8em";
+		submit.style.textAlign = "center";
+		submit.style.background = "#b7d8d3";
+		submit.style.color = "#516e99";
+		submit.style.lineHeight = "45px";
+		submit.style.border = "none";
+		submit.style.borderRadius = "3px";
+		submit.addEventListener("click", function(e){
+			var name = input.value;
+			var notes = input1.value;
+			console.info(data);
+			var data = "name="+name+"&address="+"null"+"&notes="+notes;
+			console.info(data);
+			$.ajax({
+				url: "addFont.php",
+				dataType: 'json',
+				type: 'POST',
+				data: data,
+				success: function(xhr) {
+					console.info(xhr);
+				}.bind(this),
+				error: function(xhr, status, err) {
+					console.info(xhr);
+				}.bind(this)
+			});
+			div.remove();
+		});
+		form.appendChild(input);
+		form.appendChild(input1);
+		form.appendChild(submit);
+		div.appendChild(form);
+		document.body.appendChild(div);
+		console.info("eee");
+		console.info("asda");
+	},
+	handleSendArticle: function(e){
+		var div= document.createElement("div");
+		div.style.width = "100%";
+		div.style.height = "100%";
+		div.style.background = "#516e99";
+		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.webkitAnimation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.position = "absolute";
+		div.style.zIndex = "1000000";
+		div.style.top = "0";
+		var form = document.createElement("div");
+		var input = document.createElement("input");
+		input.setAttribute("type", "text");
+		input.setAttribute("placeholder", "enter Article Title..");
+		input.style.width = "70%";
+		input.style.height = "45px";
+		input.style.display = "block";
+		input.style.border = "none";
+		input.style.fontWeight = "normal";
+		input.style.borderRadius = "3px";
+		input.style.color = "#b7d8d3";
+		input.style.background = "rgba(183, 216, 211, 0.3)";
+		input.style.margin = "15em auto";
+		input.style.marginBottom = "0";
+		input.style.paddingLeft = "1em";
+		var input1 = document.createElement("textarea");
+		input1.setAttribute("type", "text");
+		input1.setAttribute("placeholder", "enter the article/notes..");
+		input1.style.width = "70%";
+		input1.style.height = "100px";
+		input1.style.display = "block";
+		input1.style.border = "none";
+		input1.style.fontWeight = "normal";
+		input1.style.borderRadius = "3px";
+		input1.style.color = "#b7d8d3";
+		input1.style.background = "rgba(183, 216, 211, 0.3)";
+		input1.style.margin = "1em auto";
+		input1.style.marginBottom = "0";
+		input1.style.paddingLeft = "1em";
+		var submit = document.createElement("div");
+		submit.textContent = "OK";
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "save");
+		submit.style.width = "74%";
+		submit.style.height = "45px";
+		submit.style.display = "block";
+		submit.style.margin = "1em auto";
+		submit.style.fontSize = "0.8em";
+		submit.style.textAlign = "center";
+		submit.style.background = "#b7d8d3";
+		submit.style.color = "#516e99";
+		submit.style.lineHeight = "45px";
+		submit.style.border = "none";
+		submit.style.borderRadius = "3px";
+		submit.addEventListener("click", function(e){
+			var name = input.value;
+			var notes = input1.value;
+			console.info(data);
+			var data = "name="+name+"&address="+"null"+"&notes="+notes;
+			console.info(data);
+			$.ajax({
+				url: "addFont.php",
+				dataType: 'json',
+				type: 'POST',
+				data: data,
+				success: function(xhr) {
+					console.info(xhr);
+				}.bind(this),
+				error: function(xhr, status, err) {
+					console.info(xhr);
+				}.bind(this)
+			});
+			div.remove();
+		});
+		form.appendChild(input);
+		form.appendChild(input1);
+		form.appendChild(submit);
+		div.appendChild(form);
+		document.body.appendChild(div);
+		console.info("asdsada");
+	},
 	render: function(){
 		if(this.state.view=="view1"){
 			return(
 				<div className='page navbar-fixed toolbar-fixed'>
 					<Navbar>Color</Navbar>
 					<View1 />
-					<Toobar handleClick = {this.handleClick}/>
+					<Toobar handleClick = {this.handleClick} handlSend={this.handleAddColor}/>
 				</div>
 
 			)
@@ -840,7 +1106,7 @@ var View = React.createClass({
 				<div className='page navbar-fixed toolbar-fixed'>
 					<Navbar>Fonts</Navbar>
 					<View2 />
-					<Toobar handleClick = {this.handleClick} />
+					<Toobar handleClick = {this.handleClick} handlSend = {this.handleSendFont}/>
 				</div>
 
 			)
@@ -849,7 +1115,7 @@ var View = React.createClass({
 				<div className='page navbar-fixed toolbar-fixed'>
 					<Navbar>Article</Navbar>
 					<View3 />
-					<Toobar handleClick = {this.handleClick}/>
+					<Toobar handleClick = {this.handleClick} handlSend = {this.handleSendArticle}/>
 				</div>
 
 			)
