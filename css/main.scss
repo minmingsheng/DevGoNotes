@@ -44,7 +44,19 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+
 }
+
+::-webkit-scrollbar {
+  display: none;
+  
+}
+/*::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}*/
+
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
@@ -201,12 +213,60 @@ table {
 		}
 	}
 	.articleList{
-		width: 90%;
-		margin: 5em auto;
-		 list-style-position:outside;
+		width: 100%;
+		height: 100%;
+		list-style-position:outside;
+		background:rgba(183, 216, 211, 0.4);
+		overflow: auto;
+		
 		li{
-			margin: 1em;
-			 list-style-position:outside;
+			list-style: none;
+			border-bottom: 1px solid #516e99;
+			border-top: 1px solid snow;
+			/*border: 1px solid black;*/
+			margin-top:0.4px; 
+			padding: 1em 0 1em 1em;
+			cursor: pointer;
+			font-size: 0.8em;
+			width: 100%;
+			/*box-shadow:  1px 1px 4px rgba(81, 110, 153, 0.2);*/
+		}
+		.upBlur{
+/*			position: absolute;
+			width: 105%;
+			left: 0;
+			top: 80px;
+			height:120px;
+			background: red;
+			/*filter: blur(20px);*/
+			
+		}
+		.downBlur{
+/*			position: absolute;
+			width: 105%;
+			height:120px;
+			top: 300px;
+			bottom: 100px;
+			left: 0px;
+			background: red;
+			filter: blur(20px);*/
+			 
+		}
+	}
+	.feeding{
+		
+		h1{
+			width: 100%;
+			height: auto;
+			padding: 1em 0 1em 2em;
+			background: #b6d6d1;
+
+		}
+		p{	
+			padding: 2em;
+			font-size: 0.8em;
+			font-weight: 300;
+			line-height: 1.8em;
 		}
 	}
 	

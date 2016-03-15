@@ -1,5 +1,5 @@
 <?php 
-if(!isset($_POST["todo"]) || !isset($_POST["time"])){
+if(!isset($_POST["name"]) || !isset($_POST["text"])){
 	echo "no";
 }else{
 	addFont();
@@ -7,10 +7,10 @@ if(!isset($_POST["todo"]) || !isset($_POST["time"])){
 function addFont(){
 	try{
 	require("config.php");
-	$sql = "INSERT INTO `todolist` (`todo`,`time`) VALUES (:todo, :time )";
+	$sql = "INSERT INTO `Article`(`ArticleName`, `Texts`) VALUES (:name, :text)";
 	$stmt = $db->prepare($sql);
-	$stmt->bindParam(':todo', $_POST["todo"]);
-	$stmt->bindParam(':time', $_POST["time"]);
+	$stmt->bindParam(':name', $_POST["name"]);
+	$stmt->bindParam(':text', $_POST["text"]);
 	$stmt->execute();
 	$retval['message'] = 'success';
 }catch(PDOException $e){

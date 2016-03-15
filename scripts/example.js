@@ -169,58 +169,12 @@ var View2 = React.createClass({
   render: function() {
     return (
       <div className="fontNotes  page-content">
-      	{/*<h1>FontNotes</h1>*/}
-      	{/*<FontForm ></FontForm >*/}
       	<FontList/>
       </div>
     );
   }
 });
-// var FontForm = React.createClass({
-// 	handleSubmit: function(e){
-// 		e.preventDefault();
-// 		var name = e.target.children[1].value;
-// 		e.target.children[1].value="";
-// 		var address = e.target.children[3].value;
-// 		address = e.target.children[3].value="";
-// 		var notes = e.target.children[5].value;
-// 		e.target.children[5].value="";
-// 		console.info(name);
-// 		console.info(address);
-// 		console.info(notes);
-// 		var data = "name="+name+"&address="+address+"&notes="+notes;
-// 		console.info(data);
-// 		$.ajax({
-// 		     url: "addFont.php",
-// 		     dataType: 'json',
-// 		     type: 'POST',
-// 		     data: data,
-// 		     success: function(xhr) {
-// 		       console.info(xhr);
-// 		     }.bind(this),
-// 		     error: function(xhr, status, err) {
-// 		     	console.info(xhr);
-// 		     }.bind(this)
-// 		});
-// 	},
-// 	render:function(){
-// 		var width= {
-// 		  width: '100%',
-// 		};
 
-// 		return(
-// 			<form className = "fontForm page-content"  onSubmit={this.handleSubmit} >
-// 				<p>Font Name</p>
-// 				<input type="text"  className ="name" style={width} placeholder="type the font.."/>
-// 				<p>Web Address</p>
-// 				<input type="text" className ="address"  style={width} placeholder="type the address.."/>
-// 				<p>Notes</p>
-// 				<input type="text" className ="notes"  style={width} placeholder="type the notes.."/>
-// 				<input type="submit"  style={submitStyle} placeholder="type the font.."/>
-// 			</form>
-// 		);
-// 	}
-// });
 var FontList  = React.createClass({
 	getInitialState: function(){
 	  return {font:[]};
@@ -298,8 +252,6 @@ var Font = React.createClass({
 			tt.style.webkitTransform = "translate(0em, 0)";
 			tt.style.msTransform = "translate(0em, 0)";
 			this.setState({del: false});
-
-
 		}
 	},
 	render:function(){
@@ -324,12 +276,17 @@ var Font = React.createClass({
 var View3 = React.createClass({
 	getInitialState: function() {
 	   return {article: [
-	   		{ArticleName: "jason", Texts: '1abasndadadsadsadsda'},
-	   		
-	   	]};
+	   				{ArticleName: "jason", Texts: '1abasndadadsadsadsda'},
+	   		  ],
+	   		  feed: false,
+
+	   };
 	},
-	getState: function(a){
-		this.setState({article:a})
+	getState: function(a,b){
+		this.setState(
+		{article:a,
+		 feed: b
+		})
 
 	},
 	// rawMarkup: function() {
@@ -337,21 +294,33 @@ var View3 = React.createClass({
 	//   return { __html: rawMarkup };
 	// },
   render: function() {
-    return (
-      <div className="page-content" >
-      	<Selection state = {this.state.article} getState={this.getState}/>
-      	<Feeding title = {this.state.article.ArticleName} >
-      		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
-      	</Feeding>
-      </div>
-    );
+  	var	bb = {
+  		background: "#e2efed"
+  	}
+  	if(this.state.feed){
+  		return (
+  		  <div className="page-content"  style={bb }>
+  		  	<Feeding title = {this.state.article.ArticleName} >
+  		  		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
+  		  	</Feeding>
+  		  </div>
+  		);
+  	}else{
+  		return (
+  		  <div className="page-content" >
+  		  	<Selection state = {this.state.article} getState={this.getState}/>
+  		  </div>
+  		);
+
+  	}
+    
   }
 });
 var Feeding = React.createClass({
 	render:function(){
 		return (
-			<div>
-				<h1 style={h1}>{this.props.title}</h1>
+			<div className = "feeding">
+				<h1>{this.props.title}</h1>
 				<p>{this.props.children}</p>
 			</div>
 		)
@@ -363,50 +332,58 @@ var Selection = React.createClass({
 		 	article : [],
 		 };
 	},	
-	handleclick: function(e){
+	handleClickTitle: function(e){
 		e.preventDefault();
-		var data = e.target.children[0].value;
+		console.info(e.target.getAttribute("value"));
+		var data = e.target.getAttribute("value");
 		var feed = this.state.article.filter(function(el){
 			return el.ArticleName == data
 		
 		})
+		console.info(feed);
 		var text = feed[0].Texts;
 		console.info("e:", text);
 		var article ={};
 		article["ArticleName"]= data;
 		article["Texts"]=	text
-		this.props.getState(article);
+		this.props.getState(article, true);
 	},
 	loadArticle: function(){
-		console.info("jason");
 		$.ajax({
 		  url: "readAticle.php",
 		  dataType: 'json',
 		  cache: false,
 		  success: function(data) {
 		    this.setState({article: data.data});
-		    console.info(data.data);
 		  }.bind(this),
 		  error: function(xhr, status, err) {
 		    console.error(xhr);
 		  }.bind(this)
 		});
 	},
+	// handleClickTitle: function(e){
+	// 	console.info(e.target.getAttribute("value"));
+
+	// },
 	componentDidMount: function(){
 		this.loadArticle();		
+		setInterval(this.loadArticle, 1000);
 	},
 	render: function(){
 		var width = {
 			width:"100%"
 		}
+		var thathandleClickTitle = this.handleClickTitle;
 		var nodes = this.state.article.map(function(article){
 			return(
-				 <li value={article.ArticleName}>{article.ArticleName}</li>
+				 <li value={article.ArticleName} onClick={thathandleClickTitle} >{article.ArticleName}</li>
 			)
 		})
 		return(
 			<div className = "articleList">
+				<div className = "upBlur"></div>
 				{nodes}
+				<div className = "downBlur"></div>
 			</div>
 		)
 	}
@@ -1068,10 +1045,10 @@ var View = React.createClass({
 			var name = input.value;
 			var notes = input1.value;
 			console.info(data);
-			var data = "name="+name+"&address="+"null"+"&notes="+notes;
+			var data = "name="+name+"&text="+notes;
 			console.info(data);
 			$.ajax({
-				url: "addFont.php",
+				url: "addArticle.php",
 				dataType: 'json',
 				type: 'POST',
 				data: data,
