@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,900italic,900,700italic,700,400italic,300italic,300,100italic,100);
 @font-face {
   font-family: 'Hanken';
   src: url("../font/Hanken-Light.eot?#iefix") format("embedded-opentype"), url("../font/Hanken-Light.woff") format("woff"), url("../font/Hanken-Light.ttf") format("truetype"), url("../font/Hanken-Light.svg#Hanken-Light") format("svg");
@@ -45,7 +46,7 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
-  font-family: 'Hanken';
+  font-family: 'Lato', sans-serif;
   line-height: 1; }
 
 ol, ul {
@@ -77,7 +78,7 @@ table {
     width: 100%;
     height: auto; }
     #view .ColorList .color {
-      width: 90%;
+      width: 95%;
       height: auto;
       margin: auto;
       display: -webkit-box;
@@ -92,22 +93,21 @@ table {
       -webkit-flex-wrap: wrap;
           -ms-flex-wrap: wrap;
               flex-wrap: wrap;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-          -ms-flex-pack: justify;
-              justify-content: space-between; }
+      box-sizing: content-box;
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+          -ms-flex-pack: start;
+              justify-content: flex-start;
+      padding-left: 0.8em; }
       #view .ColorList .color .colorli {
-        -webkit-box-flex: 1;
-        -webkit-flex-grow: 1;
-            -ms-flex-positive: 1;
-                flex-grow: 1;
+        /*flex-grow:1;*/
         -webkit-align-self: auto;
             -ms-flex-item-align: auto;
                 align-self: auto;
-        width: 6em;
-        height: 6em;
-        margin: 0.5em;
-        margin-top: 1.25em;
+        width: 30%;
+        height: 6.5em;
+        margin: 1%;
+        margin-top: 1em;
         overflow: hidden;
         position: relative; }
         #view .ColorList .color .colorli .colorFeed {
@@ -139,7 +139,9 @@ table {
   #view .fontList {
     width: 100%; }
     #view .fontList .fontFeed {
-      position: relative; }
+      position: relative;
+      width: 100vw;
+      overflow: hidden; }
       #view .fontList .fontFeed .des {
         position: relative;
         cursor: pointer; }
@@ -147,15 +149,16 @@ table {
           width: 100%;
           background: #e2efed;
           height: auto;
-          padding: 1.4em 2em;
+          padding: 1em 2em;
           -webkit-transition: all 0.7s ease;
                   transition: all 0.7s ease; }
           #view .fontList .fontFeed .des .dess p {
             width: 70%;
             margin: 1em;
-            font-size: 0.7;
+            font-size: 0.7em;
             font-weight: 300;
-            color: rgba(0, 0, 0, 0.6); }
+            line-height: 1.7em;
+            color: rgba(0, 0, 0, 0.8); }
         #view .fontList .fontFeed .des .delFont {
           height: 100%;
           width: 5em;
@@ -187,30 +190,35 @@ table {
         position: relative;
         display: block;
         width: 100%;
-        height: 50px;
+        height: 40px;
         background: #516e99;
-        color: white;
+        color: #e1e1e1;
         font-size: 0.8em;
         text-align: center;
-        line-height: 50px;
+        line-height: 40px;
         font-weight: 300; }
   #view .articleList {
     width: 100%;
     height: 100%;
     list-style-position: outside;
     background: rgba(183, 216, 211, 0.4);
-    overflow: auto; }
+    overflow-x: hidden; }
     #view .articleList li {
       list-style: none;
-      border-bottom: 1px solid #516e99;
-      border-top: 1px solid snow;
+      border-bottom: 1px solid rgba(81, 110, 153, 0.1);
+      border-top: 1px solid rgba(255, 250, 250, 0.5);
       /*border: 1px solid black;*/
-      margin-top: 0.4px;
-      padding: 1em 0 1em 1em;
+      margin-top: 1.5px;
+      padding: 2.1em 0 2.1em 1em;
       cursor: pointer;
       font-size: 0.8em;
       width: 100%
       /*box-shadow:  1px 1px 4px rgba(81, 110, 153, 0.2);*/ }
+      #view .articleList li::before {
+        content: ">   ";
+        width: 3px;
+        height: 3px;
+        border-radius: 1.5px; }
     #view .articleList .upBlur {
       /*			position: absolute;
       			width: 105%;
@@ -228,16 +236,30 @@ table {
       			left: 0px;
       			background: red;
       			filter: blur(20px);*/ }
-  #view .feeding h1 {
-    width: 100%;
-    height: auto;
-    padding: 1em 0 1em 2em;
-    background: #b6d6d1; }
-  #view .feeding p {
-    padding: 2em;
-    font-size: 0.8em;
-    font-weight: 300;
-    line-height: 1.8em; }
+  #view .feeding {
+    overflow: hidden
+    /*		h2{
+    			width: 50px;
+    			background:#b7d8d3;
+    			border-bottom: 2px solid #516e99;
+    			border-top: 2px solid #516e99;
+    			height: 50px;
+    			line-height: 50px;
+    			text-align: center;
+    			position: fixed;
+    			top: 100px;
+    			right: 0;
+    		}*/ }
+    #view .feeding h1 {
+      width: 100%;
+      height: auto;
+      padding: 1em 0 1em 2em;
+      background: #b6d6d1; }
+    #view .feeding p {
+      padding: 2em;
+      font-size: 0.8em;
+      font-weight: 300;
+      line-height: 1.8em; }
 
 .todo {
   /*width: 100%;*/
@@ -256,8 +278,8 @@ table {
         -ms-flex-flow: row wrap;
             flex-flow: row wrap;
     width: 100%;
-    -webkit-transition: all 1s ease;
-            transition: all 1s ease;
+    -webkit-transition: all 700ms cubic-bezier(0.17, 0.67, 0.55, 1.29);
+            transition: all 700ms cubic-bezier(0.17, 0.67, 0.55, 1.29);
     z-index: 111;
     background: #dfe8eb; }
     .todo div:first-child p {
@@ -327,6 +349,18 @@ table {
     .todo .edi p {
       color: white;
       text-align: center; }
+
+.center {
+  /*		msTransform: "translate(-20px, 0)",
+  			webkitTransformt: "translate(-20px, 0)",
+  			transform: "translate(-20px, 0)",
+  			*/
+  font-family: 'Hanken';
+  font-weight: 300;
+  -webkit-transform: translate(-20px, 0);
+      -ms-transform: translate(-20px, 0);
+          transform: translate(-20px, 0);
+  color: #232832; }
 
 /*****************************************************************************
 *                                 animation                                *

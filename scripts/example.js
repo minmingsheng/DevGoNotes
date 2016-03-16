@@ -89,7 +89,7 @@ var ColorList = React.createClass({
 		});
 	},
 	clickColorFeed:function(e){
-		var t = e.target;
+		var t = e.currentTarget;
 		if(!this.state.del){
 			console.info(t);
 			t.style.webkitTransform = "translate(0,-40px)";
@@ -143,15 +143,11 @@ var Color = React.createClass({
 		  }
 		}
 	},
-	udateColor: function(e){
-		var data = e.target.textContent;
-		// console.info(data);
-	},
 	render: function(){
 		var cc = this.props.cc;
 		return (
 
-			<div className = "colorli" onMouseEnter={this.udateColor} onmousemove= {this.delColor} >
+			<div className = "colorli" onmousemove= {this.delColor} >
 				<div className = "colorFeed" style={cc} onClick={this.props.clickColorFeed}>
 					<p>{this.props.children}</p>
 				</div>
@@ -167,8 +163,12 @@ var Color = React.createClass({
 // ****************************************************************************
 var View2 = React.createClass({
   render: function() {
+  	var background = {
+		// background: "rgb(226, 239, 237)"
+
+  	};
     return (
-      <div className="fontNotes  page-content">
+      <div className="fontNotes  page-content" style = {background}>
       	<FontList/>
       </div>
     );
@@ -221,7 +221,7 @@ var Font = React.createClass({
 
 	},
 	handleclick: function(e){
-		var data = "name="+e.target.parentElement.querySelector("h1").textContent;
+		var data = "name="+e.currentTarget.parentElement.querySelector("h1").textContent;
 		console.info(data);
 		$.ajax({
 		     url: "delFont.php",
@@ -265,7 +265,6 @@ var Font = React.createClass({
 					<div className="delFont" onClick={this.handleclick}><p>Delete</p></div>
 				</div>
 				<a href={this.props.Address}><p>Take a look</p></a>
-
 			</div>
 		)
 	}
@@ -289,18 +288,18 @@ var View3 = React.createClass({
 		})
 
 	},
-	// rawMarkup: function() {
-	//   var rawMarkup = marked(this.state.article.Texts.toString(), {sanitize: true});
-	//   return { __html: rawMarkup };
-	// },
+	setbackToList: function(){
+
+		this.setState({feed:false})
+	},
   render: function() {
   	var	bb = {
   		background: "#e2efed"
   	}
   	if(this.state.feed){
   		return (
-  		  <div className="page-content"  style={bb }>
-  		  	<Feeding title = {this.state.article.ArticleName} >
+  		  <div className="page-content"  style={bb} onClick = {this.setbackToList}>
+  		  	<Feeding title = {this.state.article.ArticleName} setbackToList={this.setbackToList}>
   		  		<span dangerouslySetInnerHTML={{ __html: this.state.article.Texts }} />
   		  	</Feeding>
   		  </div>
@@ -319,7 +318,7 @@ var View3 = React.createClass({
 var Feeding = React.createClass({
 	render:function(){
 		return (
-			<div className = "feeding">
+			<div className = "feeding" Onclick={this.props.setbackToList}>
 				<h1>{this.props.title}</h1>
 				<p>{this.props.children}</p>
 			</div>
@@ -492,11 +491,14 @@ var Todolist = React.createClass({
 	},
 	handleclick : function(e){
 		var pox = e.clientX;
+		var tt = e.currentTarget;
+		console.info(tt);      
 		if(pox < window.innerWidth/2){
 			if(this.state.edi){
 				/*does not work*/
 
-				var tt = e.target.parentElement.parentElement.children[0];      
+				
+		
 				tt.parentElement.querySelector(".edi").style.zIndex = -1;
 				tt.parentElement.querySelector(".edi").style.transition = "all 33ms  ease";
 				tt.style.webkitTransform = "translate(0px, 0)";              
@@ -506,11 +508,9 @@ var Todolist = React.createClass({
 
 			}else{
 				// console.info("edit");
-				var tt = e.target.parentElement.parentElement.children[0];
 				tt.style.webkitTransform = "translate(100px, 0)";
 				tt.style.msTransform = "translate(100px, 0)";
 				tt.style.transform = "translate(100px, 0)";
-				console.info(tt.parentElement.querySelector(".edi"));
 				tt.parentElement.querySelector(".edi").style.zIndex = 1;
 				tt.parentElement.querySelector(".edi").style.transition = "all 1s 1s ease";
 
@@ -519,23 +519,24 @@ var Todolist = React.createClass({
 
 		}else{
 			console.info("del");
-			console.info(e.target.parentElement);
-			var tar = e.target.parentElement;
-			console.info(tar.parentElement.children[1]);
+			var tar = e.currentTarget;
+			var d = e.currentTarget.parentElement.querySelector('.del');
+			console.info(d);
 			if(this.state.del){
 				tar.style.webkitTransform = "translate(0px, 0)";
 				tar.style.msTransform = "translate(0px, 0)";
 				tar.style.transform = "translate(0px, 0)";
-				tar.parentElement.children[2].style.zIndex = -1;
-				tar.parentElement.children[2].style.transition = "all 33ms  ease";
+				d.style.zIndex = -1;
+				d.style.transition = "all 33ms  ease";
 
 				this.setState({del: false});
 			}else{
+
 				tar.style.webkitTransform = "translate(-100px, 0)";
 				tar.style.msTransform = "translate(-100px, 0)";
 				tar.style.transform = "translate(-100px, 0)";
-				tar.parentElement.children[2].style.zIndex = 1;
-				tar.parentElement.children[2].style.transition = "all 1s 1s ease";
+				d.style.zIndex = 1;
+				d.style.transition = "all 1s 1s ease";
 				this.setState({del: true});
 			}
 			
@@ -543,7 +544,10 @@ var Todolist = React.createClass({
 	},
 	handleDel : function(e){
 		e.stopPropagation();
-		var t =e.target.parentElement.parentElement.querySelector('p').textContent;
+		var jj = e.currentTarget.parentElement.parentElement;
+		var t =e.currentTarget.parentElement.parentElement.querySelector('p').textContent;;
+		console.info(t);
+		//
 		var data = "todo="+t;
 		console.info(t);
 		$.ajax({
@@ -552,11 +556,23 @@ var Todolist = React.createClass({
 		     type: 'POST',
 		     data: data,
 		     success: function(xhr) {
-		       console.info(xhr);
-		       this.props.loadTodo();
+		       // console.info(t.parentElement);
+		     	var todos = document.querySelectorAll(".todo");
+		     	for (var i = todos.length - 1; i >= 0; i--) {
+		     		todos[i].children[0].style.webkitTransform = "translate(0px, 0)";
+		     		todos[i].children[0].style.msTransform = "translate(0px, 0)";
+		     		todos[i].children[0].style.transform = "translate(0px, 0)";
+		     		this.setState({del: false});
+		     	};
+		     	var dels =  document.querySelectorAll(".del");
+		     	for (var i = 0; i < dels.length; i++) {
+		     		dels[i].style.zIndex = -1;
+		     		dels[i].style.transition = "all 33ms  ease";
+		     	};
+		       // this.props.loadTodo();
+
 		     }.bind(this),
 		     error: function(xhr, status, err) {
-		     	console.info(xhr);
 		     }.bind(this)
 		});
 		var tt = e.target;
@@ -575,6 +591,7 @@ var Todolist = React.createClass({
 		div.style.height = "100%";
 		div.style.background = "#516e99";
 		div.style.animation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
+		div.style.webkitAnimation = "showup 400ms 1 cubic-bezier(.67,.4,.6,1.32)";
 		div.style.position = "absolute";
 		div.style.zIndex = "1000000";
 		div.style.top = "0";
@@ -636,8 +653,24 @@ var Todolist = React.createClass({
 			});
 			div.remove();
 		}, false)
+		var cancel = document.createElement("div");
+		cancel.textContent = "cancel";
+		cancel.style.width = "74%";
+		cancel.style.height = "45px";
+		cancel.style.display = "block";
+		cancel.style.margin = "1em auto";
+		cancel.style.fontSize = "0.8em";
+		cancel.style.textAlign = "center";
+		cancel.style.border = "1px solid #b7d8d3";
+		cancel.style.color = "#b7d8d3";
+		cancel.style.lineHeight = "45px";
+		cancel.style.borderRadius = "3px";
+		cancel.addEventListener("click", function(a){
+			div.remove();
+		}, false)
 		form.appendChild(input);
 		form.appendChild(submit);
+		form.appendChild(cancel);
 		div.appendChild(form);
 		document.body.appendChild(div);
 	},
@@ -733,9 +766,7 @@ var Navbar = React.createClass({
 			borderBottom: "3px solid #e85037"
 		};
 		var center = {
-			msTransform: "translate(-20px, 0)",
-			webkitTransformt: "translate(-20px, 0)",
-			transform: "translate(-20px, 0)"
+
 		};
 		return(	
 			<div className="navbar" >
@@ -763,8 +794,8 @@ var View = React.createClass({
 		};
 	},
 	handleClick: function(e){
-		var t = e.target.getAttribute("href").split("").splice(1,6).join("").replace("-",'');
-		console.log(t);
+		var t = e.currentTarget.getAttribute("href").split("").splice(1,6).join("").replace("-",'');;
+		console.info(t);
 		this.setState({view: t})
 	},
 	handlSendtodo:function(e){
@@ -806,6 +837,7 @@ var View = React.createClass({
 		submit.style.background = "#b7d8d3";
 		submit.style.color = "#516e99";
 		submit.style.lineHeight = "45px";
+		submit.style.cursor = "pointer";
 		submit.style.border = "none";
 		submit.style.borderRadius = "3px";
 		submit.addEventListener("click", function(e){
@@ -830,8 +862,25 @@ var View = React.createClass({
 			});
 			div.remove();
 		}, false)
+		var cancel = document.createElement("div");
+		cancel.textContent = "Cancel";
+		cancel.style.width = "74%";
+		cancel.style.height = "45px";
+		cancel.style.display = "block";
+		cancel.style.margin = "0.1em auto";
+		cancel.style.fontSize = "0.8em";
+		cancel.style.textAlign = "center";
+		cancel.style.color = "#b7d8d3";
+		cancel.style.lineHeight = "45px";
+		cancel.style.cursor = "pointer";
+		cancel.style.border = "1px solid #b7d8d3";
+		cancel.style.borderRadius = "3px";
+		cancel.addEventListener("click", function(e){
+			div.remove();
+		}, false)
 		form.appendChild(input);
 		form.appendChild(submit);
+		form.appendChild(cancel);
 		div.appendChild(form);
 		document.body.appendChild(div);
 
@@ -898,8 +947,30 @@ var View = React.createClass({
 			});
 			div.remove();
 		});
+		var cancel = document.createElement("div");
+		cancel.textContent = "Cancel";
+		cancel.style.width = "74%";
+		cancel.style.height = "45px";
+		cancel.style.display = "block";
+		cancel.style.margin = "0.1em auto";
+		cancel.style.fontSize = "0.8em";
+		cancel.style.textAlign = "center";
+		cancel.style.color = "#b7d8d3";
+		cancel.style.lineHeight = "45px";
+		cancel.style.cursor = "pointer";
+		cancel.style.border = "1px solid #b7d8d3";
+		cancel.style.borderRadius = "3px";
+		cancel.addEventListener("click", function(e){
+			div.remove();
+		}, false)
 		form.appendChild(input);
 		form.appendChild(submit);
+		form.appendChild(cancel);
+		div.appendChild(form);
+		document.body.appendChild(div);
+		form.appendChild(input);
+		form.appendChild(submit);
+		form.appendChild(cancel);
 		div.appendChild(form);
 		document.body.appendChild(div);
 		console.info("eee");
@@ -979,9 +1050,28 @@ var View = React.createClass({
 			});
 			div.remove();
 		});
+		var cancel = document.createElement("div");
+		cancel.textContent = "Cancel";
+		cancel.style.width = "74%";
+		cancel.style.height = "45px";
+		cancel.style.display = "block";
+		cancel.style.margin = "0.1em auto";
+		cancel.style.fontSize = "0.8em";
+		cancel.style.textAlign = "center";
+		cancel.style.color = "#b7d8d3";
+		cancel.style.lineHeight = "45px";
+		cancel.style.cursor = "pointer";
+		cancel.style.border = "1px solid #b7d8d3";
+		cancel.style.borderRadius = "3px";
+		cancel.addEventListener("click", function(e){
+			div.remove();
+		}, false)
+
+
 		form.appendChild(input);
 		form.appendChild(input1);
 		form.appendChild(submit);
+		form.appendChild(cancel);
 		div.appendChild(form);
 		document.body.appendChild(div);
 		console.info("eee");
@@ -1061,9 +1151,26 @@ var View = React.createClass({
 			});
 			div.remove();
 		});
+		var cancel = document.createElement("div");
+		cancel.textContent = "Cancel";
+		cancel.style.width = "74%";
+		cancel.style.height = "45px";
+		cancel.style.display = "block";
+		cancel.style.margin = "0.1em auto";
+		cancel.style.fontSize = "0.8em";
+		cancel.style.textAlign = "center";
+		cancel.style.color = "#b7d8d3";
+		cancel.style.lineHeight = "45px";
+		cancel.style.cursor = "pointer";
+		cancel.style.border = "1px solid #b7d8d3";
+		cancel.style.borderRadius = "3px";
+		cancel.addEventListener("click", function(e){
+			div.remove();
+		}, false)
 		form.appendChild(input);
 		form.appendChild(input1);
 		form.appendChild(submit);
+		form.appendChild(cancel);
 		div.appendChild(form);
 		document.body.appendChild(div);
 		console.info("asdsada");
